@@ -1,2 +1,6 @@
 server:
   port: 40001
+
+spring:
+  r2dbc:
+    url: r2dbc:pool:mysql://127.0.0.1:3306/test

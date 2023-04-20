@@ -2,15 +2,21 @@ package com.pbear.mainfunctionalserver.dev
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.server.HandlerFunction
-import org.springframework.web.reactive.function.server.RouterFunction
-import org.springframework.web.reactive.function.server.RouterFunctions
-import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.*
+
+import org.springframework.web.reactive.function.server.RequestPredicates.*
+
 
 @Configuration
 class DevRouter {
     @Bean
-    fun devRoute() : RouterFunction<ServerResponse> = RouterFunctions.route()
-        .GET("/dev") { ServerResponse.ok().bodyValue(mapOf("result" to "success")) }
-        .build()
+    fun devRoute(devHandler: DevHandler) : RouterFunction<ServerResponse> = RouterFunctions
+        .nest(
+            path("/dev"),
+            router {
+                GET("") { devHandler.getDev() }
+                POST("") { devHandler.postDev(it) }
+                GET("/data/{devId}") { devHandler.getData(it) }
+                POST("/data") { devHandler.postData(it) }
+            })
 }
