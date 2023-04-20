@@ -5,10 +5,11 @@ plugins {
 	id("io.spring.dependency-management") version "1.0.15.RELEASE"
 	kotlin("jvm") version "1.6.21"
 	kotlin("plugin.spring") version "1.6.21"
+	id("org.jetbrains.kotlin.plugin.noarg") version "1.8.20"
 }
 
 group = "com.pbear"
-version = "0.0.4"
+version = "0.0.5"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -36,6 +37,10 @@ dependencies {
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
+}
+
+noArg {
+	annotation("com.pbear.mainfunctionalserver.common.util.NoArg")
 }
 
 tasks.withType<KotlinCompile> {

@@ -1,6 +1,7 @@
 package com.pbear.mainfunctionalserver.dev
 
 import mu.KotlinLogging
+import org.modelmapper.ModelMapper
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -12,7 +13,7 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Component
-class DevHandler(private val devRepository: DevRepository) {
+class DevHandler(private val devRepository: DevRepository, private val modelMapper: ModelMapper) {
     private val log = KotlinLogging.logger {  }
 
     fun getDev(): Mono<ServerResponse> = ok()
@@ -32,9 +33,7 @@ class DevHandler(private val devRepository: DevRepository) {
 
     fun postData(serverRequest: ServerRequest): Mono<ServerResponse> = ok()
         .body(serverRequest
-            .bodyToMono(Dev::class.java)
-            .flatMap {
-                this.devRepository.save(it)
-            })
-
+            .bodyToMono(PostDevData::class.java)
+            .map { this.modelMapper.map(it, Dev::class.java) }
+            .flatMap { this.devRepository.save(it) })
 }
