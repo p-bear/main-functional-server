@@ -2,12 +2,12 @@
 <configuration>
     <springProfile name="local">
         <property name="FILE_PATH" value="/users/friendship41/workspace/logs"/>
-        <property name="FILE_NAME" value="data-collect-server"/>
+        <property name="FILE_NAME" value="main-functional-server"/>
     </springProfile>
 
     <springProfile name="release">
         <property name="FILE_PATH" value="/logs"/>
-        <property name="FILE_NAME" value="data-collect-server"/>
+        <property name="FILE_NAME" value="main-functional-server"/>
     </springProfile>
 
 
