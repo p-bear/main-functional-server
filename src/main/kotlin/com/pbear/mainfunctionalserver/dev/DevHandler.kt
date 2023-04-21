@@ -26,6 +26,11 @@ class DevHandler(private val devRepository: DevRepository, private val modelMapp
         .body(serverRequest.bodyToMono(HashMap::class.java))
         .doOnNext { log.info("dev POST") }
 
+    fun getDataList(serverRequest: ServerRequest): Mono<ServerResponse> = this.devRepository
+        .findAll()
+        .collectList()
+        .flatMap { ok().bodyValue(mapOf("devList" to it)) }
+
     fun getData(serverRequest: ServerRequest): Mono<ServerResponse> = this.devRepository
         .findById(serverRequest.pathVariable("devId").toLong())
         .flatMap { ok().bodyValue(it) }
@@ -36,4 +41,14 @@ class DevHandler(private val devRepository: DevRepository, private val modelMapp
             .bodyToMono(PostDevData::class.java)
             .map { this.modelMapper.map(it, Dev::class.java) }
             .flatMap { this.devRepository.save(it) })
+
+    fun putData(serverRequest: ServerRequest): Mono<ServerResponse> = ok()
+        .body(serverRequest.bodyToMono(PutDevData::class.java)
+            .zipWhen { this.devRepository.findById(it.id) }
+            .doOnNext { this.modelMapper.map(it.t1, it.t2) }
+            .flatMap { this.devRepository.save(it.t2) })
+
+    fun deleteData(serverRequest: ServerRequest): Mono<ServerResponse> = this.devRepository
+        .deleteById(serverRequest.pathVariable("devId").toLong())
+        .then(Mono.defer { ok().bodyValue(mapOf("result" to "success")) })
 }

@@ -15,8 +15,12 @@ class DevRouter {
             path("/dev"),
             router {
                 GET("") { devHandler.getDev() }
-                POST("") { devHandler.postDev(it) }
-                GET("/data/{devId}") { devHandler.getData(it) }
-                POST("/data") { devHandler.postData(it) }
+                POST("", devHandler::postDev)
+
+                GET("/data", devHandler::getDataList)
+                GET("/data/{devId}", devHandler::getData)
+                POST("/data", devHandler::postData)
+                PUT("/data", devHandler::putData)
+                DELETE("/data/{devId}", devHandler::deleteData)
             })
 }
