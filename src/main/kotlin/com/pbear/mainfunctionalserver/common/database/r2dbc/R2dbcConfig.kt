@@ -1,8 +1,107 @@
 package com.pbear.mainfunctionalserver.common.database.r2dbc
 
+import io.r2dbc.spi.ConnectionFactories
+import io.r2dbc.spi.ConnectionFactory
+import io.r2dbc.spi.ConnectionFactoryOptions
+import io.r2dbc.spi.Option
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
+import org.springframework.data.r2dbc.core.DefaultReactiveDataAccessStrategy
+import org.springframework.data.r2dbc.core.R2dbcEntityOperations
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
+import org.springframework.data.r2dbc.dialect.MySqlDialect
+import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
+import org.springframework.r2dbc.core.DatabaseClient
+
+
+@EnableR2dbcAuditing
+class R2dbcCommonConfig
 
 @Configuration
-@EnableR2dbcAuditing
-class R2dbcConfig
+@EnableR2dbcRepositories(
+    basePackages = ["com.pbear.mainfunctionalserver.dev"],
+    entityOperationsRef = "testMysqlR2dbcEntityOperations")
+class R2dbcTestDBConfig {
+    @Value("\${r2dbc.test.host}")
+    val host: String = ""
+
+    @Value("\${r2dbc.test.port}")
+    val port: Int = -1
+
+    @Value("\${r2dbc.test.username}")
+    val username: String = ""
+
+    @Value("\${r2dbc.test.password}")
+    val password: String = ""
+
+    @Bean
+    @Qualifier("testConnectionFactory")
+    fun testConnectionFactory(): ConnectionFactory = ConnectionFactories
+        .get(ConnectionFactoryOptions.builder()
+            .option(ConnectionFactoryOptions.SSL, true)
+            .option(ConnectionFactoryOptions.DRIVER, "pool")
+            .option(ConnectionFactoryOptions.PROTOCOL, "mariadb")
+            .option(ConnectionFactoryOptions.HOST, host)
+            .option(ConnectionFactoryOptions.PORT, port)
+            .option(ConnectionFactoryOptions.USER, username)
+            .option(ConnectionFactoryOptions.PASSWORD, password)
+            .option(ConnectionFactoryOptions.DATABASE, "test")
+            .option(Option.valueOf("initialSize"), 5)
+            .option(Option.valueOf("maxSize"), 20)
+            .option(Option.valueOf("validationQuery"), "select 1+1")
+            .build())
+
+    @Bean
+    fun testMysqlR2dbcEntityOperations(@Qualifier("testConnectionFactory") connectionFactory: ConnectionFactory): R2dbcEntityOperations =
+        R2dbcEntityTemplate(
+            DatabaseClient.builder()
+                .connectionFactory(connectionFactory)
+                .build(),
+            DefaultReactiveDataAccessStrategy(MySqlDialect.INSTANCE))
+}
+
+@Configuration
+@EnableR2dbcRepositories(
+    basePackages = ["com.pbear.mainfunctionalserver.main"],
+    entityOperationsRef = "mainMysqlR2dbcEntityOperations")
+class R2dbcMainDBConfig {
+    @Value("\${r2dbc.main.host}")
+    val host: String = ""
+
+    @Value("\${r2dbc.main.port}")
+    val port: Int = -1
+
+    @Value("\${r2dbc.main.username}")
+    val username: String = ""
+
+    @Value("\${r2dbc.main.password}")
+    val password: String = ""
+
+    @Bean
+    @Qualifier("mainConnectionFactory")
+    fun mainConnectionFactory(): ConnectionFactory = ConnectionFactories
+        .get(ConnectionFactoryOptions.builder()
+            .option(ConnectionFactoryOptions.SSL, true)
+            .option(ConnectionFactoryOptions.DRIVER, "pool")
+            .option(ConnectionFactoryOptions.PROTOCOL, "mariadb")
+            .option(ConnectionFactoryOptions.HOST, host)
+            .option(ConnectionFactoryOptions.PORT, port)
+            .option(ConnectionFactoryOptions.USER, username)
+            .option(ConnectionFactoryOptions.PASSWORD, password)
+            .option(ConnectionFactoryOptions.DATABASE, "main")
+            .option(Option.valueOf("initialSize"), 5)
+            .option(Option.valueOf("maxSize"), 20)
+            .option(Option.valueOf("validationQuery"), "select 1+1")
+            .build())
+
+    @Bean
+    fun mainMysqlR2dbcEntityOperations(@Qualifier("mainConnectionFactory") connectionFactory: ConnectionFactory): R2dbcEntityOperations =
+        R2dbcEntityTemplate(
+            DatabaseClient.builder()
+                .connectionFactory(connectionFactory)
+                .build(),
+            DefaultReactiveDataAccessStrategy(MySqlDialect.INSTANCE))
+}

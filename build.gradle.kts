@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.pbear"
-version = "0.0.6"
+version = "0.0.7"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -26,6 +26,7 @@ dependencies {
 	// Support Lib
 	implementation("org.mariadb:r2dbc-mariadb:1.0.3")
 	implementation("org.modelmapper:modelmapper:3.0.0")
+	implementation("io.netty:netty-resolver-dns-native-macos:4.1.70.Final:osx-aarch_64")
 
 	// Kotlin
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
