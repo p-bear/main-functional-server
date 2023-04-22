@@ -1,4 +1,4 @@
-package com.pbear.mainfunctionalserver.common.database.r2dbc
+package com.pbear.mainfunctionalserver.common.config
 
 import io.r2dbc.spi.ConnectionFactories
 import io.r2dbc.spi.ConnectionFactory
