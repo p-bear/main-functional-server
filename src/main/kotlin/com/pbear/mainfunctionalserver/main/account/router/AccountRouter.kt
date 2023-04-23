@@ -13,5 +13,7 @@ class AccountRouter {
             RequestPredicates.path("/main/api/account"),
             router {
                 POST("", accountHandler::postAccount)
+                PUT("", accountHandler::putAccount)
+                DELETE("/{id}", accountHandler::deleteAccount)
             })
 }

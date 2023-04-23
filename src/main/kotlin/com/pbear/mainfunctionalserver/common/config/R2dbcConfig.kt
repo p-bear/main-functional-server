@@ -8,17 +8,32 @@ import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.auditing.ReactiveIsNewAwareAuditingHandler
+import org.springframework.data.mapping.context.PersistentEntities
 import org.springframework.data.r2dbc.config.EnableR2dbcAuditing
 import org.springframework.data.r2dbc.core.DefaultReactiveDataAccessStrategy
 import org.springframework.data.r2dbc.core.R2dbcEntityOperations
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate
 import org.springframework.data.r2dbc.dialect.MySqlDialect
+import org.springframework.data.r2dbc.mapping.R2dbcMappingContext
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.springframework.r2dbc.core.DatabaseClient
 
 
+@Configuration
 @EnableR2dbcAuditing
-class R2dbcCommonConfig
+class R2dbcCommonConfig {
+    @Bean
+    fun reactiveIsNewAwareAuditingHandler(r2dbcMappingContext: R2dbcMappingContext): ReactiveIsNewAwareAuditingHandler {
+        return ReactiveIsNewAwareAuditingHandler(
+            PersistentEntities.of(r2dbcMappingContext))
+    }
+
+    @Bean
+    fun r2dbcMappingContext(): R2dbcMappingContext {
+        return R2dbcMappingContext()
+    }
+}
 
 @Configuration
 @EnableR2dbcRepositories(

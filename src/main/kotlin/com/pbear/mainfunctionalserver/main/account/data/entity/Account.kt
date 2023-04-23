@@ -1,5 +1,6 @@
 package com.pbear.mainfunctionalserver.main.account.data.entity
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.pbear.mainfunctionalserver.common.util.NoArg
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
@@ -30,6 +31,7 @@ data class Account(
 
     @ReadOnlyProperty
     private var newAccount: Boolean = false
+    @JsonIgnore
     override fun isNew(): Boolean {
         return this.newAccount || this.accountId.isEmpty()
     }

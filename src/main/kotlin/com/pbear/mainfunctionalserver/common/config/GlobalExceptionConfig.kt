@@ -59,6 +59,7 @@ class GlobalExceptionConfig(
 
     fun createErrorResponseBody(code: String, message: String, path: String) =
         mapOf(
+            "result" to "fail",
             "code" to code,
             "message" to message,
             "path" to path)
