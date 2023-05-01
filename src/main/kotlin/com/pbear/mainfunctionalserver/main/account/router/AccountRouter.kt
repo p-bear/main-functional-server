@@ -14,6 +14,6 @@ class AccountRouter {
             router {
                 POST("", accountHandler::postAccount)
                 PUT("", accountHandler::putAccount)
-                DELETE("/{id}", accountHandler::deleteAccount)
+                DELETE("/{userId}", accountHandler::deleteAccount)
             })
 }

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 class ModelMapperConfig {
     @Bean
     fun modelMapper() = ModelMapper().apply {
-        configuration.matchingStrategy = MatchingStrategies.LOOSE
+        configuration.matchingStrategy = MatchingStrategies.STRICT
         configuration.isFieldMatchingEnabled = true
         configuration.fieldAccessLevel = org.modelmapper.config.Configuration.AccessLevel.PRIVATE
         configuration.isSkipNullEnabled = true

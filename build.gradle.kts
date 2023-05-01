@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.pbear"
-version = "0.0.9"
+version = "0.0.10"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -22,6 +22,7 @@ dependencies {
 	// Spring
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 
 	// Support Lib
 	implementation("org.mariadb:r2dbc-mariadb:1.0.3")
