@@ -33,7 +33,7 @@ class AccountHandler(private val modelMapper: ModelMapper, private val accountRe
         .zipWhen { this.accountRepository.findByUserId(it.userId) }
         .flatMap {
             if (passwordEncoder.matches(it.t1.password, it.t2.password)) {
-                ok().build()
+                ok().bodyValue(this.modelMapper.map(it.t2, ResAccount::class.java))
             } else {
                 return@flatMap Mono.error(
                     CustomException(ResponseErrorCode.ACCOUNT_3, null,
