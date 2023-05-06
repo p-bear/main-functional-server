@@ -4,6 +4,7 @@ import com.pbear.mainfunctionalserver.common.data.dto.CommonResDTO
 import com.pbear.mainfunctionalserver.common.data.exception.CustomException
 import com.pbear.mainfunctionalserver.common.data.exception.ResponseErrorCode
 import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPostAccount
+import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPostAccountPassword
 import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPutAccount
 import com.pbear.mainfunctionalserver.main.account.data.dto.ResAccount
 import com.pbear.mainfunctionalserver.main.account.data.entity.Account
@@ -19,11 +20,29 @@ import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.springframework.web.reactive.function.server.body
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Component
 class AccountHandler(private val modelMapper: ModelMapper, private val accountRepository: AccountRepository,
     private val passwordEncoder: PasswordEncoder) {
     private val log = KotlinLogging.logger {  }
+
+    fun checkAccountPassword(serverRequest: ServerRequest): Mono<ServerResponse> = serverRequest
+        .bodyToMono(ReqPostAccountPassword::class.java)
+        .doOnNext { serverRequest.exchange().attributes["userId"] = it.userId }
+        .zipWhen { this.accountRepository.findByUserId(it.userId) }
+        .flatMap {
+            if (passwordEncoder.matches(it.t1.password, it.t2.password)) {
+                ok().build()
+            } else {
+                return@flatMap Mono.error(
+                    CustomException(ResponseErrorCode.ACCOUNT_3, null,
+                        mapOf("{userId}" to serverRequest.exchange().attributes["userId"] as String))
+                )
+            }
+        }
+        .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null,
+            mapOf("{userId}" to serverRequest.exchange().attributes["userId"] as String)) }
 
     fun postAccount(serverRequest: ServerRequest): Mono<ServerResponse> = ok()
         .body(serverRequest

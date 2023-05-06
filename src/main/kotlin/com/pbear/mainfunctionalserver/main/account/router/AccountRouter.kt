@@ -15,5 +15,6 @@ class AccountRouter {
                 POST("", accountHandler::postAccount)
                 PUT("", accountHandler::putAccount)
                 DELETE("/{userId}", accountHandler::deleteAccount)
+                POST("/password", accountHandler::checkAccountPassword)
             })
 }

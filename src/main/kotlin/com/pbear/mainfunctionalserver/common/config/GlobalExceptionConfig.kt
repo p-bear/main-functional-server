@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono
 @Order(-2)
 class GlobalExceptionConfig(
     errorAttributes: DefaultErrorAttributes,
-    val resources: Resources,
+    resources: Resources,
     applicationContext: AbstractApplicationContext
 ) : AbstractErrorWebExceptionHandler(errorAttributes, resources, applicationContext) {
 
