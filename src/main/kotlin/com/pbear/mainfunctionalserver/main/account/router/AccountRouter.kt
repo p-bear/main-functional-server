@@ -10,7 +10,7 @@ class AccountRouter {
     @Bean
     fun routeAccount(accountHandler: AccountHandler): RouterFunction<ServerResponse> = RouterFunctions
         .nest(
-            RequestPredicates.path("/main/api/account"),
+            RequestPredicates.path("/api/account"),
             router {
                 POST("", accountHandler::postAccount)
                 PUT("", accountHandler::putAccount)
