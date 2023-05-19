@@ -3,11 +3,10 @@ package com.pbear.mainfunctionalserver.main.account.handler
 import com.pbear.mainfunctionalserver.common.data.dto.CommonResDTO
 import com.pbear.mainfunctionalserver.common.data.exception.CustomException
 import com.pbear.mainfunctionalserver.common.data.exception.ResponseErrorCode
-import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPostAccount
-import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPostAccountPassword
-import com.pbear.mainfunctionalserver.main.account.data.dto.ReqPutAccount
-import com.pbear.mainfunctionalserver.main.account.data.dto.ResAccount
+import com.pbear.mainfunctionalserver.main.account.data.dto.*
 import com.pbear.mainfunctionalserver.main.account.data.entity.Account
+import com.pbear.mainfunctionalserver.main.account.data.entity.AccountGoogle
+import com.pbear.mainfunctionalserver.main.account.repository.AccountGoogleRepository
 import com.pbear.mainfunctionalserver.main.account.repository.AccountRepository
 import mu.KotlinLogging
 import org.modelmapper.ModelMapper
@@ -23,8 +22,11 @@ import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.switchIfEmpty
 
 @Component
-class AccountHandler(private val modelMapper: ModelMapper, private val accountRepository: AccountRepository,
-    private val passwordEncoder: PasswordEncoder) {
+class AccountHandler(private val modelMapper: ModelMapper,
+                     private val accountRepository: AccountRepository,
+                     private val passwordEncoder: PasswordEncoder,
+                     private val accountGoogleRepository: AccountGoogleRepository
+) {
     private val log = KotlinLogging.logger {  }
 
     fun checkAccountPassword(serverRequest: ServerRequest): Mono<ServerResponse> = serverRequest
@@ -43,6 +45,39 @@ class AccountHandler(private val modelMapper: ModelMapper, private val accountRe
         }
         .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null,
             mapOf("{userId}" to serverRequest.exchange().attributes["userId"] as String)) }
+
+    fun getAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
+        val googleId = serverRequest.queryParam("googleId")
+            .orElseThrow { CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to "none")) }
+        return this.accountGoogleRepository.findByGoogleId(googleId)
+            .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to googleId)) }
+            .map { this.modelMapper.map(it, ResAccountGoogle::class.java) }
+            .flatMap { ok().bodyValue(CommonResDTO(it)) }
+    }
+
+    fun deleteAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
+        val googleId = serverRequest.queryParam("googleId")
+            .orElseThrow { CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to "none")) }
+        return this.accountGoogleRepository.deleteByGoogleId(googleId)
+            .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to googleId)) }
+            .then(Mono.defer { ok().bodyValue(CommonResDTO(null)) })
+    }
+
+    fun postAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
+        return serverRequest.bodyToMono(ReqPostAccountGoogle::class.java)
+            .doOnNext { serverRequest.exchange().attributes["userId"] = it.accountId.toString() }
+            .map { this.modelMapper.map(it, AccountGoogle::class.java) }
+            .flatMap { this.accountGoogleRepository.save(it) }
+            .onErrorMap {
+                when (it) {
+                    is DataIntegrityViolationException -> CustomException(ResponseErrorCode.ACCOUNT_1, it,
+                        mapOf("{userId}" to serverRequest.exchange().attributes["userId"] as String))
+                    else -> it
+                }
+            }
+            .map { this.modelMapper.map(it, ResAccountGoogle::class.java) }
+            .flatMap { ok().bodyValue(CommonResDTO(it)) }
+    }
 
     fun postAccount(serverRequest: ServerRequest): Mono<ServerResponse> = ok()
         .body(serverRequest

@@ -16,5 +16,9 @@ class AccountRouter {
                 PUT("", accountHandler::putAccount)
                 DELETE("/{userId}", accountHandler::deleteAccount)
                 POST("/password", accountHandler::checkAccountPassword)
+
+                POST("/google", accountHandler::postAccountGoogle)
+                GET("/google", accountHandler::getAccountGoogle)
+                DELETE("/google", accountHandler::deleteAccountGoogle)
             })
 }
