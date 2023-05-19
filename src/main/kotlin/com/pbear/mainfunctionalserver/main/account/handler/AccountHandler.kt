@@ -47,10 +47,10 @@ class AccountHandler(private val modelMapper: ModelMapper,
             mapOf("{userId}" to serverRequest.exchange().attributes["userId"] as String)) }
 
     fun getAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
-        val googleId = serverRequest.queryParam("googleId")
+        val accountId = serverRequest.queryParam("accountId")
             .orElseThrow { CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to "none")) }
-        return this.accountGoogleRepository.findByGoogleId(googleId)
-            .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to googleId)) }
+        return this.accountGoogleRepository.findByAccountId(accountId.toLong())
+            .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to accountId)) }
             .map { this.modelMapper.map(it, ResAccountGoogle::class.java) }
             .flatMap { ok().bodyValue(CommonResDTO(it)) }
     }

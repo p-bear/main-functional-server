@@ -5,6 +5,6 @@ import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Mono
 
 interface AccountGoogleRepository: ReactiveCrudRepository<AccountGoogle, Long> {
-    fun findByGoogleId(googleId: String): Mono<AccountGoogle>
+    fun findByAccountId(accountId: Long): Mono<AccountGoogle>
     fun deleteByGoogleId(googleId: String): Mono<Void>
 }
