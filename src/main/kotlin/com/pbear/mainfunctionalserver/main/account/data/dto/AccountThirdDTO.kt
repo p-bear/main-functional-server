@@ -24,6 +24,7 @@ data class ResAccountGoogle(
     val name: String,
     val givenName: String,
     val verifiedEmail: Boolean,
+    val refreshToken: String,
     var creDate: LocalDateTime,
     var modDate: LocalDateTime
 )
