@@ -1,2 +1,7 @@
 server:
   port: 40001
+
+webclient:
+  url:
+    google:
+      calendar: https://www.googleapis.com/calendar/v3

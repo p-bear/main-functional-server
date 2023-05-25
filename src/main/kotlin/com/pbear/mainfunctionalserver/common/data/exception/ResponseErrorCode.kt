@@ -11,5 +11,7 @@ enum class ResponseErrorCode(
 
     ACCOUNT_1("account.1", HttpStatus.BAD_REQUEST, "Duplicated Id, userId={userId}"),
     ACCOUNT_2("account.2", HttpStatus.BAD_REQUEST, "id notFound, userId={userId}"),
-    ACCOUNT_3("account.3", HttpStatus.UNAUTHORIZED, "password not match, userId={userId}")
+    ACCOUNT_3("account.3", HttpStatus.UNAUTHORIZED, "password not match, userId={userId}"),
+
+    EASY_CALENDAR_1("easyCalendar.1", HttpStatus.UNAUTHORIZED, "google AccessToken not valid")
 }
