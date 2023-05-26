@@ -7,11 +7,16 @@ import org.springframework.web.reactive.function.server.*
 @Configuration
 class EasyCalendarRouter {
     @Bean
-    fun routeEasyCalendar(easyCalendarHandler: EasyCalendarHandler): RouterFunction<ServerResponse>  = RouterFunctions
+    fun routeEasyCalendar(
+        easyCalendarGoogleHandler: EasyCalendarGoogleHandler,
+        easyCalendarTemplateHandler: EasyCalendarTemplateHandler): RouterFunction<ServerResponse>  = RouterFunctions
         .nest(
             RequestPredicates.path("/api/easyCalendar"),
             router {
-                GET("/calendarList", easyCalendarHandler::handleGetCalendarList)
-                GET("/calendars/{calendarId}/events", easyCalendarHandler::handleGetCalendarsEvents)
+                GET("/calendarList", easyCalendarGoogleHandler::handleGetCalendarList)
+                GET("/calendars/{calendarId}/events", easyCalendarGoogleHandler::handleGetCalendarsEvents)
+
+                POST("/template", easyCalendarTemplateHandler::handlePostTemplate)
+                GET("/template", easyCalendarTemplateHandler::handleGetTemplateList)
             })
 }

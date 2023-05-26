@@ -12,7 +12,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 
 @Component
-class EasyCalendarHandler(private val googleCalendarWebClient: GoogleCalendarWebClient) {
+class EasyCalendarGoogleHandler(private val googleCalendarWebClient: GoogleCalendarWebClient) {
     fun handleGetCalendarList(serverRequest: ServerRequest): Mono<ServerResponse> {
         return this.googleCalendarWebClient.getWebClient()
             .get()
