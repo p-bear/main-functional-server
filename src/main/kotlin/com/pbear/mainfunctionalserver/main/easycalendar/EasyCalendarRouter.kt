@@ -16,6 +16,7 @@ class EasyCalendarRouter {
                 GET("/calendarList", easyCalendarGoogleHandler::handleGetCalendarList)
                 GET("/calendars/{calendarId}/events", easyCalendarGoogleHandler::handleGetCalendarsEvents)
 
+                GET("/template/type", easyCalendarTemplateHandler::handleGetTemplateType)
                 POST("/template", easyCalendarTemplateHandler::handlePostTemplate)
                 GET("/template", easyCalendarTemplateHandler::handleGetTemplateList)
             })

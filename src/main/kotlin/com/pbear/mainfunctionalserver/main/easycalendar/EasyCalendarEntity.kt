@@ -15,9 +15,16 @@ data class CalendarTemplate(
     val accountId: Long,
     val title: String,
     val summary: String,
+    val type: CalendarTemplateType,
     var properties: String? = null,
     @CreatedDate
     var creDate: LocalDateTime? = null,
     @LastModifiedDate
     var modDate: LocalDateTime? = null
 )
+
+enum class CalendarTemplateType(
+    val desc: String
+) {
+    WEEKDAY("요일 Pick")
+}

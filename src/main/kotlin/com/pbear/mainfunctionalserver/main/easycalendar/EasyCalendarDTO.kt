@@ -6,6 +6,7 @@ import com.pbear.mainfunctionalserver.common.util.NoArg
 data class ReqPostCalendarTemplate(
     val title: String,
     val summary: String,
+    val type: CalendarTemplateType,
     val properties: Map<String, Any>?,
 )
 
@@ -14,5 +15,6 @@ data class ResCalendarTemplate(
     val id: Long,
     val title: String,
     val summary: String,
+    val type: CalendarTemplateType,
     val properties: Map<String, Any>?,
 )
