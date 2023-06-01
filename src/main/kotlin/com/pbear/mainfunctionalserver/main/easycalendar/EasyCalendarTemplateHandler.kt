@@ -39,6 +39,6 @@ class EasyCalendarTemplateHandler(
             serverRequest.headers().firstHeader("accountId")?.toLong() ?: throw CustomException(ResponseErrorCode.ACCOUNT_1))
             .map { ResCalendarTemplate(it.id!!, it.title, it.summary, it.type, it.properties?.run { objectMapper.readValue(this, HashMap::class.java) as Map<String, Any> }) }
             .collect(Collectors.toList())
-            .flatMap { ServerResponse.ok().bodyValue(it) }
+            .flatMap { ServerResponse.ok().bodyValue(CommonResDTO(it)) }
     }
 }
