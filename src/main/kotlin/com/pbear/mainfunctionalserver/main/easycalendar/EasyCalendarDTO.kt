@@ -18,3 +18,10 @@ data class ResCalendarTemplate(
     val type: CalendarTemplateType,
     val properties: Map<String, Any>?,
 )
+
+@NoArg
+data class ReqPostCalendarEvents(
+    val summary: String,
+    val startTime: String,
+    val endTime: String,
+)

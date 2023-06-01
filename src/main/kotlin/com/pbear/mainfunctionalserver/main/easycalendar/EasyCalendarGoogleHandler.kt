@@ -46,6 +46,36 @@ class EasyCalendarGoogleHandler(private val googleCalendarWebClient: GoogleCalen
             .flatMap { ServerResponse.ok().bodyValue(CommonResDTO(it)) }
     }
 
+    fun handlePostCalendarsEvents(serverRequest: ServerRequest): Mono<ServerResponse> {
+        return serverRequest.bodyToMono(ReqPostCalendarEvents::class.java)
+            .map {
+                mapOf(
+                    "kind" to "calendar#event",
+                    "summary" to it.summary,
+                    "start" to mapOf(
+                        "dateTime" to it.startTime,
+                        "timeZone" to "Asia/Seoul"
+                    ),
+                    "end" to mapOf(
+                        "dateTime" to it.endTime,
+                        "timeZone" to "Asia/Seoul"
+                    ),
+                    "reminders" to mapOf(
+                        "useDefault" to true
+                    )
+                )
+            }
+            .flatMap { body ->
+                this.googleCalendarWebClient.getWebClient()
+                    .post()
+                    .uri{ it.path(CALENDAR_EVENTS_PATH.replace("{calendarId}", serverRequest.pathVariable("calendarId"))).build() }
+                    .headers { this.setGoogleAccessToken(serverRequest, it) }
+                    .bodyValue(body)
+                    .retrieve()
+                    .bodyToMono(HashMap::class.java)
+            }
+            .flatMap { ServerResponse.ok().bodyValue(CommonResDTO(it)) }
+    }
 
 
     private fun setGoogleAccessToken(serverRequest: ServerRequest, headers: HttpHeaders) {
