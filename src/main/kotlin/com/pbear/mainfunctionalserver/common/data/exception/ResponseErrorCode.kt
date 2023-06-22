@@ -8,6 +8,7 @@ enum class ResponseErrorCode(
     val message: String
 ) {
     COMMON_1("common.1", HttpStatus.INTERNAL_SERVER_ERROR, "Unknown Error"),
+    COMMON_2("common.2", HttpStatus.BAD_REQUEST, "notfound by id"),
 
     ACCOUNT_1("account.1", HttpStatus.BAD_REQUEST, "Duplicated Id, userId={userId}"),
     ACCOUNT_2("account.2", HttpStatus.BAD_REQUEST, "id notFound, userId={userId}"),

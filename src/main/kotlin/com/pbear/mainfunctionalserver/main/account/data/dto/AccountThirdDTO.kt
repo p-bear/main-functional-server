@@ -16,6 +16,12 @@ data class ReqPostAccountGoogle(
 )
 
 @NoArg
+data class ReqPutAccountGoogle(
+    val accountId: Long,
+    val refreshToken: String
+)
+
+@NoArg
 data class ResAccountGoogle(
     val id: Long,
     val googleId: String,

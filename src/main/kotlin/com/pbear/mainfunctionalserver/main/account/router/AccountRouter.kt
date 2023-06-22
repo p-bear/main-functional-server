@@ -14,11 +14,13 @@ class AccountRouter {
             router {
                 POST("", accountHandler::postAccount)
                 PUT("", accountHandler::putAccount)
-                DELETE("/{userId}", accountHandler::deleteAccount)
                 POST("/password", accountHandler::checkAccountPassword)
 
                 POST("/google", accountHandler::postAccountGoogle)
                 GET("/google", accountHandler::getAccountGoogle)
                 DELETE("/google", accountHandler::deleteAccountGoogle)
+                PUT("/google", accountHandler::putAccountGoogle)
+
+                DELETE("/{userId}", accountHandler::deleteAccount)
             })
 }

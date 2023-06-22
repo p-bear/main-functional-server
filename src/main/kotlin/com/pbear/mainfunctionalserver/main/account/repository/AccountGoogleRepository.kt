@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono
 
 interface AccountGoogleRepository: ReactiveCrudRepository<AccountGoogle, Long> {
     fun findByAccountId(accountId: Long): Mono<AccountGoogle>
-    fun deleteByGoogleId(googleId: String): Mono<Void>
+    fun deleteByAccountId(accountId: Long): Mono<Void>
 }

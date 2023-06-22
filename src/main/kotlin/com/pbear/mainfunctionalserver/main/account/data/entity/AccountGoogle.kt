@@ -19,7 +19,7 @@ data class AccountGoogle(
     val givenName: String,
     val verifiedEmail: Boolean,
     val scope: String,
-    val refreshToken: String,
+    var refreshToken: String,
     @CreatedDate
     var creDate: LocalDateTime?,
     @LastModifiedDate

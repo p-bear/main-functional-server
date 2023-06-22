@@ -56,10 +56,9 @@ class AccountHandler(private val modelMapper: ModelMapper,
     }
 
     fun deleteAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
-        val googleId = serverRequest.queryParam("googleId")
-            .orElseThrow { CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to "none")) }
-        return this.accountGoogleRepository.deleteByGoogleId(googleId)
-            .switchIfEmpty { throw CustomException(ResponseErrorCode.ACCOUNT_2, null, mapOf("userId" to googleId)) }
+        val accountId = serverRequest.queryParam("accountId")
+            .orElseThrow { CustomException(ResponseErrorCode.COMMON_2) }
+        return this.accountGoogleRepository.deleteByAccountId(accountId.toLong())
             .then(Mono.defer { ok().bodyValue(CommonResDTO(null)) })
     }
 
@@ -76,6 +75,18 @@ class AccountHandler(private val modelMapper: ModelMapper,
                 }
             }
             .map { this.modelMapper.map(it, ResAccountGoogle::class.java) }
+            .flatMap { ok().bodyValue(CommonResDTO(it)) }
+    }
+
+    fun putAccountGoogle(serverRequest: ServerRequest): Mono<ServerResponse> {
+        return serverRequest.bodyToMono(ReqPutAccountGoogle::class.java)
+            .zipWhen { this.accountGoogleRepository.findByAccountId(it.accountId)
+                .switchIfEmpty { throw CustomException(ResponseErrorCode.COMMON_2) }}
+            .map {
+                it.t2.refreshToken = it.t1.refreshToken
+                it.t2
+            }
+            .map { this.accountGoogleRepository.save(it) }
             .flatMap { ok().bodyValue(CommonResDTO(it)) }
     }
 
